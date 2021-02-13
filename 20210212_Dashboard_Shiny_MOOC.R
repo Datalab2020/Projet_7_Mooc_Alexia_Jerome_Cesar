@@ -130,8 +130,8 @@ ui <- dashboardPage(
               fluidRow(
                 # Dynamic infoBoxes
                 infoBoxOutput("progressBox_p", width = 3),
-                infoBoxOutput("approvalBox_p", width = 3),
                 infoBoxOutput("progressBox2_p", width = 3),
+                infoBoxOutput("approvalBox_p", width = 3),
                 infoBoxOutput("approvalBox2_p", width = 3)
               ),
               
