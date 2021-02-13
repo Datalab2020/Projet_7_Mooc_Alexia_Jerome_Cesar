@@ -116,8 +116,6 @@ ui <- dashboardPage(
       # First tab content
       tabItem(tabName = "dashboard",
               fluidRow(
-                h2("    Général"),
-                h2(" "),
                 pickerInput(
                   inputId = "Mooc",      label = "Les Moocs",
                   choices = c(
@@ -132,15 +130,10 @@ ui <- dashboardPage(
               fluidRow(
                 # Dynamic infoBoxes
                 infoBoxOutput("progressBox_p", width = 3),
-                infoBoxOutput("progressBox2_p", width = 3),
                 infoBoxOutput("approvalBox_p", width = 3),
+                infoBoxOutput("progressBox2_p", width = 3),
                 infoBoxOutput("approvalBox2_p", width = 3)
               ),
-              
-              #fluidRow(
-                #boxPlus(title = "Plop",  background = "black", solidHeader = TRUE, verbatimTextOutput("value")),
-                #boxPlus(title = "Plip",  background = "black", solidHeader = TRUE, tableOutput("table"))
-              #),
               
               fluidRow(
                 # Clicking this will increment the progress amount
@@ -155,7 +148,7 @@ ui <- dashboardPage(
                   plotlyOutput("plot2_p")),
                 
                 box(
-                  title = "Word cloud Python", status = "primary",solidHeader = TRUE,
+                  title = "Word cloud", status = "primary",solidHeader = TRUE,
                   collapsible = TRUE,width = 4,
                   wordcloud2Output("cloud")
                 )
@@ -164,8 +157,6 @@ ui <- dashboardPage(
       
       tabItem(tabName = "donnees",
               fluidRow(
-                h2("    Analyse des sentiments"),
-                h2(" "),
                 pickerInput(
                   inputId = "sentid",
                   label = "Les Moocs",
@@ -196,7 +187,6 @@ ui <- dashboardPage(
                         )
                 ),
                 box(title = "Les réactions",status = "primary", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, collapsed = TRUE,  tableOutput("table"))
-                #boxPlus(title = "Plip",  background = "black", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, verbatimTextOutput("value"))
               )
       )
       
@@ -276,14 +266,16 @@ server <- function(input, output) {
         #subtitle = "Your Subtitle", 
         #caption = "Your Caption"
       ) +
-      theme_minimal()+
+      theme_gray()+
       theme(
+        panel.background = element_rect(fill = "grey", colour ="grey"),
+        panel.grid = element_line(size=0.5, linetype = "solid",color = "darkgrey"),
         legend.position = "none",
         axis.title.x = element_blank(),
         axis.title.y = element_blank(),
         axis.ticks = element_blank(),
         axis.text.y = element_blank(),
-        axis.text.x = element_text(face = "bold"),
+        axis.text.x = element_text(face = "bold", colour = "white", size = "30pts"),
         plot.title = element_text(size = 24, face = "bold"),
         plot.subtitle = element_text(size = 12)
       )
@@ -470,16 +462,16 @@ server <- function(input, output) {
   # result_python$utilisateurs -- est dans le fichier 20210208_MOOC_python.R
   output$progressBox_p <- renderInfoBox({
     infoBox(
-      "Nombre de utilisateurs", reac_dfval()$utilisateurs, icon = icon("users"),
-      color = "aqua"
+      "Nombre d'utilisateurs", reac_dfval()$utilisateurs, icon = icon("users"),
+      color = "green"
     )
   })
   
   # result_python$plus_actif -- est dans le fichier 20210208_MOOC_python.R
   output$approvalBox_p <- renderInfoBox({
     infoBox(
-      "Utilisateur plus actif", reac_dfval()$plus_actif, icon = icon("thumbs-up", lib = "glyphicon"), 
-      color = "yellow"
+      "Utilisateur le plus actif", reac_dfval()$plus_actif, icon = icon("send", lib = "glyphicon"), 
+      color = "olive"
     )
   })
   
@@ -487,8 +479,8 @@ server <- function(input, output) {
   # result_python$publications -- est dans le fichier 20210208_MOOC_python.R
   output$progressBox2_p <- renderInfoBox({
     infoBox(
-      "nombre total de publications", reac_dfval()$publications, icon = icon("comments"),
-      color = "aqua", fill = TRUE
+      "Nombre total de publications", reac_dfval()$publications, icon = icon("comments"),
+      color = "green", fill = TRUE
     )
   })
   
@@ -496,7 +488,7 @@ server <- function(input, output) {
   output$approvalBox2_p <- renderInfoBox({
     infoBox(
       "Nombre de posts", reac_dfval()$pub_plus_actif, icon = icon("thumbs-up", lib = "glyphicon"),
-      color = "yellow", fill = TRUE
+      color = "olive", fill = TRUE
     )
   })
   
