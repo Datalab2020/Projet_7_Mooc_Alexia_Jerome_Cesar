@@ -109,6 +109,11 @@ ui <- dashboardPage(
         font-weight: bold;
         font-size: 24px;
       }
+      .box.box-solid.box-primary>.box-header{
+      }
+      .box.box-solid.box-primary{
+      background:grey
+      }
       }
     '))),
     
@@ -211,7 +216,8 @@ server <- function(input, output) {
   
   # fonction reactive permettant de changer la table suivant les sentiments
   reac_sentbutton <- reactive ({
-    sent_items <- which(reac_dfsent()[[2]][input$sentbutton] > 2)
+    df_sent <- reac_dfsent()[[2]][input$sentbutton]
+    sent_items <- which(df_sent > 3)
     res_sent <- reac_dfsent()[[1]][sent_items]
     head(res_sent)
   })
@@ -266,9 +272,12 @@ server <- function(input, output) {
         #subtitle = "Your Subtitle", 
         #caption = "Your Caption"
       ) +
-      theme_gray()+
+      theme_minimal()+
       theme(
+        #strip.background = element_rect(fill = "grey", colour ="grey"),
         panel.background = element_rect(fill = "grey", colour ="grey"),
+        panel.border = element_blank(),
+        plot.background = element_rect(fill = "darkgrey", colour = "black"),
         panel.grid = element_line(size=0.5, linetype = "solid",color = "darkgrey"),
         legend.position = "none",
         axis.title.x = element_blank(),
@@ -277,7 +286,7 @@ server <- function(input, output) {
         axis.text.y = element_blank(),
         axis.text.x = element_text(face = "bold", colour = "white", size = "30pts"),
         plot.title = element_text(size = 24, face = "bold"),
-        plot.subtitle = element_text(size = 12)
+        plot.subtitle = element_text(size = 12),
       )
     plot
   })
