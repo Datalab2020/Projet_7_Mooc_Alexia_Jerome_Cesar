@@ -14,8 +14,13 @@ library(tm)
 library(wordcloud)
 library(wordcloud2)
 library(RColorBrewer)
+library(fresh)
 
-
+mytheme <- create_theme(
+  adminlte_color(
+    light_blue = "#008080"
+  )
+)
 
 #####################
 #Fonction pour faire l'association mot-sentiments sur les dfs
@@ -97,12 +102,13 @@ ui <- dashboardPage(
   ),
   ## Body content
   dashboardBody(
-    
+    use_theme(mytheme),
     tags$head(tags$style(HTML('
       .my-class { 
         font-family: "Georgia", Times, "Times New Roman", serif;
         font-weight: bold;
         font-size: 24px;
+      }
       }
     '))),
     
@@ -174,9 +180,9 @@ ui <- dashboardPage(
                 )
               ),
               fluidRow(
-                boxPlus(title = "La jauge", background = "black", solidHeader = TRUE, closable = FALSE, collapsible = TRUE,plotlyOutput("jauge")),
-                boxPlus(title = "La roue", background = "black", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, plotOutput("plot1")),
-                boxPlus(title = "Le choix",  background = "black", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, 
+                box(title = "La jauge",status = "primary", solidHeader = TRUE, closable = FALSE, collapsible = TRUE,plotlyOutput("jauge")),
+                box(title = "La roue",status = "primary", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, plotOutput("plot1")),
+                box(title = "Le choix",status = "primary", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, 
                         radioGroupButtons(
                           inputId = "sentbutton",
                           label = "Label",
@@ -189,7 +195,7 @@ ui <- dashboardPage(
                                         style = "color: steelblue"))
                         )
                 ),
-                boxPlus(title = "Les réactions",  background = "black", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, collapsed = TRUE,  tableOutput("table"))
+                box(title = "Les réactions",status = "primary", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, collapsed = TRUE,  tableOutput("table"))
                 #boxPlus(title = "Plip",  background = "black", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, verbatimTextOutput("value"))
               )
       )
