@@ -88,22 +88,11 @@ wordcloud2a <- function (data, size = 1, minSize = 0, gridSize = 0, fontFamily =
 
 ui <- dashboardPage(
   
-  dashboardHeader(title = "Dashboard DataLab"),
+  dashboardHeader(title = "FUN MOOC"),
   dashboardSidebar(
     sidebarMenu(
       menuItem("Général", tabName = "dashboard", icon = icon("dashboard")),
       menuItem("Sentiment Analysis", tabName = "donnees", icon = icon("file-code-o"))
-    ),
-    
-    pickerInput(
-      inputId = "Mooc",      label = "Les Moocs",
-      choices = c(
-        "Introduction à la statistique avec R"="messages_R",
-        "Apprendre à coder avec Python"="messages_Python_vf",
-        "L'Intelligence Artificielle… avec intelligence !"="messages_IA",
-        "Les mots du pouvoir"="messages_Les_mots_du_pouvoir",
-        "Introduction à la physique quantique"="messages_Physique_Quantique"
-      )
     )
   ),
   ## Body content
@@ -120,11 +109,21 @@ ui <- dashboardPage(
     tabItems(
       # First tab content
       tabItem(tabName = "dashboard",
-              
               fluidRow(
-                h2("    FUN-MOOC"),
+                h2("    Général"),
                 h2(" "),
-                
+                pickerInput(
+                  inputId = "Mooc",      label = "Les Moocs",
+                  choices = c(
+                    "Introduction à la statistique avec R"="messages_R",
+                    "Apprendre à coder avec Python"="messages_Python_vf",
+                    "L'Intelligence Artificielle… avec intelligence !"="messages_IA",
+                    "Les mots du pouvoir"="messages_Les_mots_du_pouvoir",
+                    "Introduction à la physique quantique"="messages_Physique_Quantique"
+                  )
+                )
+              ),
+              fluidRow(
                 # Dynamic infoBoxes
                 infoBoxOutput("progressBox_p", width = 3),
                 infoBoxOutput("progressBox2_p", width = 3),
@@ -159,6 +158,8 @@ ui <- dashboardPage(
       
       tabItem(tabName = "donnees",
               fluidRow(
+                h2("    Analyse des sentiments"),
+                h2(" "),
                 pickerInput(
                   inputId = "sentid",
                   label = "Les Moocs",
