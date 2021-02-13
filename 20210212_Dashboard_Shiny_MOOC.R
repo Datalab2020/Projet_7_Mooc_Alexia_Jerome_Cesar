@@ -181,7 +181,7 @@ ui <- dashboardPage(
                 box(title = "Le choix",status = "primary", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, 
                         radioGroupButtons(
                           inputId = "sentbutton",
-                          label = "Label",
+                          label = "Examen des différents messages suivant les sentiments",
                           choices = c("anger", "trust", "anticipation", "disgust","fear","joy","sadness","surprise","trust"),
                           individual = TRUE,
                           checkIcon = list(
