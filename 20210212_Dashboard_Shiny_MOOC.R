@@ -124,11 +124,13 @@ ui <- dashboardPage(
                 pickerInput(
                   inputId = "Mooc",      label = "Les Moocs",
                   choices = c(
-                    "Introduction à la statistique avec R"="messages_R",
+                    "Introduction à la physique quantique"="messages_Physique_Quantique",
+                    "Elles font l'art"="messages_Art_feminin",
                     "Apprendre à coder avec Python"="messages_Python_vf",
-                    "L'Intelligence Artificielle… avec intelligence !"="messages_IA",
                     "Les mots du pouvoir"="messages_Les_mots_du_pouvoir",
-                    "Introduction à la physique quantique"="messages_Physique_Quantique"
+                    "Introduction à la statistique avec R"="messages_R",
+                    "L'Intelligence Artificielle… avec intelligence !"="messages_IA",
+                    "Probabilités pour l'ingénieur"="messages_Proba"
                   )
                 )
               ),
@@ -236,8 +238,8 @@ server <- function(input, output) {
         borderwidth = 2,
         bordercolor = "gray",
         steps = list(
-          list(range = c(0, 50), color = "cyan"),
-          list(range = c(50, 100), color = "royalblue"))),
+          list(range = c(0, 66), color = "cyan"),
+          list(range = c(66, 100), color = "royalblue"))),
       type = "indicator",
       mode = "gauge+number")
     
