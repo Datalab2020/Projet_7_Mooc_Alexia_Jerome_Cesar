@@ -112,7 +112,7 @@ ui <- dashboardPage(
       .box.box-solid.box-primary>.box-header{
       }
       .box.box-solid.box-primary{
-      background:grey
+      background:silver
       }
       }
     '))),
@@ -176,8 +176,8 @@ ui <- dashboardPage(
                 )
               ),
               fluidRow(
-                box(title = "La jauge",status = "primary", solidHeader = TRUE, closable = FALSE, collapsible = TRUE,plotlyOutput("jauge")),
                 box(title = "La roue",status = "primary", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, plotOutput("plot1")),
+                box(title = "La jauge",status = "primary", solidHeader = TRUE, closable = FALSE, collapsible = TRUE,plotlyOutput("jauge")),
                 box(title = "Le choix",status = "primary", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, 
                         radioGroupButtons(
                           inputId = "sentbutton",
@@ -217,7 +217,7 @@ server <- function(input, output) {
   # fonction reactive permettant de changer la table suivant les sentiments
   reac_sentbutton <- reactive ({
     df_sent <- reac_dfsent()[[2]][input$sentbutton]
-    sent_items <- which(df_sent > 3)
+    sent_items <- which(df_sent > 2)
     res_sent <- reac_dfsent()[[1]][sent_items]
     head(res_sent)
   })
