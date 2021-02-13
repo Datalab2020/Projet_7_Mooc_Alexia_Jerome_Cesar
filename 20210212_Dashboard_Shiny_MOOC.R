@@ -164,11 +164,11 @@ ui <- dashboardPage(
                   inputId = "sentid",
                   label = "Les Moocs",
                   choices = c(
+                    "Introduction à la physique quantique"="messages_Physique_Quantique",
+                    "Elles font l'art"="messages_Art_feminin",
                     "Les mots du pouvoir"="messages_Les_mots_du_pouvoir",
                     "Introduction à la statistique avec R"="messages_R",
                     "L'Intelligence Artificielle… avec intelligence !"="messages_IA",
-                    "Elles font l'art"="messages_Art_feminin",
-                    "Introduction à la physique quantique"="messages_Physique_Quantique",
                     "Probabilités pour l'ingénieur"="messages_Proba"
                   )
                 )
@@ -225,7 +225,7 @@ server <- function(input, output) {
     fig <- plot_ly(
       domain = list(x=c(0,1, y =c(0,1))),
       value = (reac_dfsent()[4][[1]][2,1])*100,
-      title = list(text="Degré de satisfaction(en %)"),
+      title = list(text="Degré de satisfaction (en %)"),
       delta = list(reference = 400, increasing = list(color = "RebeccaPurple")),
       gauge = list(
         axis = list(range = list(0, 100), tickwidth = 1, tickcolor = "darkblue"),
@@ -397,12 +397,13 @@ server <- function(input, output) {
       # Create a corpus  
       docs <- Corpus(VectorSource(text$body))
       
-      docs <- docs %>%
-        tm_map(removeNumbers) %>%
-        tm_map(removePunctuation) %>%
-        tm_map(stripWhitespace)
+      toSpace <- content_transformer(function (x , pattern ) gsub(pattern, " ", x))
+      docs <- tm_map(docs, toSpace, "/") 
       docs <- tm_map(docs, content_transformer(tolower))
+      docs <- tm_map(docs, removeNumbers)
       docs <- tm_map(docs, removeWords, stopwords("french"))
+      docs <- tm_map(docs, removePunctuation)
+      docs <- tm_map(docs, stripWhitespace)
       
       dtm <- TermDocumentMatrix(docs) 
       matrix <- as.matrix(dtm) 
