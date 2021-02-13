@@ -239,7 +239,7 @@ server <- function(input, output) {
       mode = "gauge+number")
     
     fig <- fig %>%
-      layout(margin = list(l=20,r=30), paper_bgcolor="lavender", font = list(color="darkblue", family = "Hoefler Text"))
+      layout(margin = list(l=20,r=30), paper_bgcolor="lavender", font = list(color="darkblue", family = "Arial"))
     
     fig
   })
