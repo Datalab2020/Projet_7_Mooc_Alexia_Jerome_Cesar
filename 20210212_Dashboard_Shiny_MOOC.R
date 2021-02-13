@@ -191,7 +191,7 @@ ui <- dashboardPage(
                                         style = "color: steelblue"))
                         )
                 ),
-                box(title = "Les réactions",status = "primary", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, collapsed = TRUE,  tableOutput("table"))
+                box(title = "Les réactions", status = "primary", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, collapsed = TRUE,  tableOutput("table"))
               )
       )
       
