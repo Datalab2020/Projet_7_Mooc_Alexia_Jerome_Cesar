@@ -1,8 +1,10 @@
 # fbrisadelamontaña()
 
 library(mongolite)
+library(syuzhet)
 library(shiny)
 library(shinydashboard)
+library(shinydashboardPlus)
 library(shinyWidgets)
 library(tidyverse)
 library(plotly)
@@ -14,6 +16,25 @@ library(wordcloud2)
 library(RColorBrewer)
 
 
+
+#####################
+#Fonction pour faire l'association mot-sentiments sur les dfs
+#####################
+trait_sent <- function (df_t) {
+  df2 <- str_replace_all(df_t, "\n"," ")
+  char_v <- get_sentences(df2)
+  method <- "nrc"
+  lang <- "french"
+  mtv <- get_nrc_sentiment(char_v, language=lang)
+  mtv2 <- as.data.frame(cbind(sort(colSums(prop.table(mtv[,1:8]))))) %>%
+    mutate(sent=row.names(.)) %>%
+    rename(per=V1)
+  mtv3 <- as.data.frame(cbind(sort(colSums(prop.table(mtv[,9:10]))))) %>%
+    mutate(sent=row.names(.)) %>%
+    rename(per=V1)
+  return(list(char_v,mtv,mtv2,mtv3))
+}
+##################################
 
 #édition de la librairie wordcloud2 afin que le nuage de mots et d'autres graphiques puissent être affichés en même temps
 #--------------------------------------------------------------------------------------------
@@ -70,13 +91,12 @@ ui <- dashboardPage(
   dashboardHeader(title = "Dashboard DataLab"),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
-      menuItem("Exemples", tabName = "donnees", icon = icon("file-code-o"))
+      menuItem("Général", tabName = "dashboard", icon = icon("dashboard")),
+      menuItem("Sentiment Analysis", tabName = "donnees", icon = icon("file-code-o"))
     ),
     
     pickerInput(
-      inputId = "Mooc",
-      label = "Les Moocs",
+      inputId = "Mooc",      label = "Les Moocs",
       choices = c(
         "Introduction à la statistique avec R"="messages_R",
         "Apprendre à coder avec Python"="messages_Python_vf",
@@ -102,7 +122,7 @@ ui <- dashboardPage(
       tabItem(tabName = "dashboard",
               
               fluidRow(
-                h2("     FUN-MOOC"),
+                h2("    FUN-MOOC"),
                 h2(" "),
                 
                 # Dynamic infoBoxes
@@ -137,17 +157,133 @@ ui <- dashboardPage(
               )
         ),
       
-      # Second tab content
-      tabItem(tabName = "donnees", div(class = "my-class", p("")),
-              div(class = "my-class", a("Quelques exemples", href = "https://rstudio.github.io/shinydashboard/examples.html")),
+      tabItem(tabName = "donnees",
+              fluidRow(
+                pickerInput(
+                  inputId = "sentid",
+                  label = "Les Moocs",
+                  choices = c(
+                    "Les mots du pouvoir"="messages_Les_mots_du_pouvoir",
+                    "Introduction à la statistique avec R"="messages_R",
+                    "L'Intelligence Artificielle… avec intelligence !"="messages_IA",
+                    "Elles font l'art"="messages_Art_feminin",
+                    "Introduction à la physique quantique"="messages_Physique_Quantique",
+                    "Probabilités pour l'ingénieur"="messages_Proba"
+                  )
+                )
+              ),
+              fluidRow(
+                boxPlus(title = "La jauge", background = "black", solidHeader = TRUE, closable = FALSE, collapsible = TRUE,plotlyOutput("jauge")),
+                boxPlus(title = "La roue", background = "black", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, plotOutput("plot1")),
+                boxPlus(title = "Le choix",  background = "black", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, 
+                        radioGroupButtons(
+                          inputId = "sentbutton",
+                          label = "Label",
+                          choices = c("anger", "trust", "anticipation", "disgust","fear","joy","sadness","surprise","trust"),
+                          individual = TRUE,
+                          checkIcon = list(
+                            yes = tags$i(class = "fa fa-circle", 
+                                         style = "color: steelblue"),
+                            no = tags$i(class = "fa fa-circle-o", 
+                                        style = "color: steelblue"))
+                        )
+                ),
+                boxPlus(title = "Les réactions",  background = "black", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, collapsed = TRUE,  tableOutput("table"))
+                #boxPlus(title = "Plip",  background = "black", solidHeader = TRUE, closable = FALSE, collapsible = TRUE, verbatimTextOutput("value"))
+              )
       )
-
-)
-)
+      
+    )
+  )
 )
 
 server <- function(input, output) {
+
+###############
+# Partie server du second tab
+###############
+  # fonction reactive de l'onglet "Les Moocs"
+  reac_dfsent <- reactive({ 
+    config <- yaml::yaml.load_file("config.yml")
+    id <- input$sentid
+    url <- paste("mongodb://", config$mongo$user, ":", config$mongo$password,"@127.0.0.1/bdd_grp4?authSource=admin", sep="")
+    o <- mongo(id, url = url)
+    plop <- o$aggregate('[{"$project": {"_id":0,"body":"$body"}}]')
+    trait_sent(plop$body)
+  })
   
+  # fonction reactive permettant de changer la table suivant les sentiments
+  reac_sentbutton <- reactive ({
+    sent_items <- which(reac_dfsent()[[2]][input$sentbutton] > 2)
+    res_sent <- reac_dfsent()[[1]][sent_items]
+    head(res_sent)
+  })
+  
+  # fonction reactive de la jauge en fonction de reac_dfsent
+  reac_jauge <- reactive ({
+    fig <- plot_ly(
+      domain = list(x=c(0,1, y =c(0,1))),
+      value = (reac_dfsent()[4][[1]][2,1])*100,
+      title = list(text="Degré de satisfaction(en %)"),
+      delta = list(reference = 400, increasing = list(color = "RebeccaPurple")),
+      gauge = list(
+        axis = list(range = list(0, 100), tickwidth = 1, tickcolor = "darkblue"),
+        bar = list(color = "darkblue"),
+        bgcolor = "white",
+        borderwidth = 2,
+        bordercolor = "gray",
+        steps = list(
+          list(range = c(0, 50), color = "cyan"),
+          list(range = c(50, 100), color = "royalblue"))),
+      type = "indicator",
+      mode = "gauge+number")
+    
+    fig <- fig %>%
+      layout(margin = list(l=20,r=30), paper_bgcolor="lavender", font = list(color="darkblue", family = "Hoefler Text"))
+    
+    fig
+  })
+  
+  # Table des sentiments sortie
+  output$table <- renderTable({
+    reac_sentbutton()
+  })
+  
+  # Jauge sortie
+  output$jauge <- renderPlotly(reac_jauge())
+  
+  # Barplot coordonnées polaires sortie
+  output$plot1 <- renderPlot({
+    plot <- ggplot(reac_dfsent()[[3]],
+                   aes(
+                     x = sent,
+                     y = per,
+                     fill = sent,
+                     text="sent"
+                   )) +
+      geom_col(width = 1, color = "white") +
+      coord_polar()+ labs(
+        x = "",
+        y = ""#,
+        #title = "Your Title",
+        #subtitle = "Your Subtitle", 
+        #caption = "Your Caption"
+      ) +
+      theme_minimal()+
+      theme(
+        legend.position = "none",
+        axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.y = element_blank(),
+        axis.text.x = element_text(face = "bold"),
+        plot.title = element_text(size = 24, face = "bold"),
+        plot.subtitle = element_text(size = 12)
+      )
+    plot
+  })
+  
+  ################ 
   
   reac_dfval <- reactive({ 
     
@@ -164,7 +300,6 @@ server <- function(input, output) {
             {"$limit": 20}
             ]')
       
-      print(pub_par_ut_python)
       pub_par_ut_2_python <- pub_par_ut_python[-1,]  # nous éliminons le premier endroit qui est le formateur
       
       # Top 20 des utilisateurs les plus actifs
