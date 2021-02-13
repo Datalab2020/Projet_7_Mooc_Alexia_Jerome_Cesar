@@ -284,9 +284,7 @@ server <- function(input, output) {
         axis.title.y = element_blank(),
         axis.ticks = element_blank(),
         axis.text.y = element_blank(),
-        axis.text.x = element_text(face = "bold", colour = "white", size = "30pts"),
-        plot.title = element_text(size = 24, face = "bold"),
-        plot.subtitle = element_text(size = 12),
+        axis.text.x = element_text(face = "bold", colour = "white")
       )
     plot
   })
