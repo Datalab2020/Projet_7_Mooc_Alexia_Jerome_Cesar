@@ -7,13 +7,13 @@ Notre client Fun mooc nous a demandévde réaliser une étude statistique du com
 
 Le déroulement du projet:
 
-Organisation du projet avec Github & Trello  https://trello.com/b/jeaIVg8n/mooc
+Organisation du projet avec Github & Trello  
 
 Première analyse des Moocs 
 
 Analyse de la  structure des données
 
-Extraction et chargement des données du site sur la base de données       voir fichier python:
+Extraction et chargement des données du site sur la base de données       voir fichier python: importation_de_données_momgodb.py
 
 Analyse des champs du fichier json
 
@@ -24,6 +24,13 @@ Requetage (Mongodb & script R)
 DataViz (Shiny Dashboard)
 
 
-Le shinnyboard voir document : 20210212_Dashboard_Shiny_MOOC.R
+Le shinnyboard voir document : 20210215_Dashboard_Shiny_MOOC.R
 
-Notre Trello:
+Notre Trello: https://trello.com/b/jeaIVg8n/mooc
+
+Librairies utilisée:
+* messages_Physique_Quantique.json
+* messages_Python_vf.json
+* messages_Les_mots_du_pouvoir.json
+* messages_R.json
+* messages_IA.json
